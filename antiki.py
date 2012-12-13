@@ -40,16 +40,16 @@ def antiki(view, edit):
 		view.insert(edit, eol, head)
 		eol += len(head)
 	view.sel().add(sublime.Region(eol,eol))
-
+	
 def build_env(cfg, base=None):
 	env = os.environ.copy()
-	env['BASE'] = base or env.get("HOME", ".")
+	env['BASE'] = str(base or env.get("HOME") or '.')
 	mod = cfg.get('env', {})
 	for key in mod:
-		print key
-		env[key] = expand(mod[key], env)
+		val = expand(mod[key], env)
+		env[key] = val
 	return env
-
+	
 ''' example:
 $ echo $BASE
   /Users/scott/Library/Application Support/Sublime Text 2/Packages/Antiki
