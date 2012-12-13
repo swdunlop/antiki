@@ -25,7 +25,6 @@ def antiki(view, edit):
 
 		end = replace_lines(view, edit, row, end-row, out) 
 
-	print end
 	if end is None: return # don't play with the selection..
 	end = view.line(end.b)
 	view.sel().clear()
@@ -34,57 +33,6 @@ def antiki(view, edit):
 		view.insert(edit, eol, head)
 		eol += len(head)
 	view.sel().add(sublime.Region(eol,eol))
-
-'''
-import Queue, threading
-
-def start_cmd(cmd):
-	args = cmd
-	pipe = subprocess.Popen(
-		args, stdout = subprocess.PIPE, stderr = subprocess.STDOUT, shell=True
-	)
-	queue = Queue.Queue()
-	spawn(lambda: read_pipe(queue, pipe))
-
-	def done():
-		print "done"
-		
-	def update():
-		print "starting update"
-		try:
-			while True:
-				msg = queue.get(False)
-				if not isinstance(msg, basestring): 
-					return done()
-				print "got", repr(msg)
-		except Queue.Empty:
-			pass 
-
-		sublime.set_timeout(update, 1000)
-
-	update()
-
-def spawn(thunk):	
-	t = threading.Thread(target=thunk)
-	t.daemon = True
-	t.start()
-	return t
-
-def read_pipe(queue, pipe):
-	try:
-		while True:
-			print "reading line"
-			line = pipe.stdout.readline()
-			print "putting line"
-			queue.put(line)
-			if pipe.poll() is not None:
-				break
-
-		for line in pipe.stdout.readlines():
-			queue.put(line)
-	finally:
-		queue.put(pipe.returncode or None)
-'''
 
 def perform_cmd(cmd):
 	args = cmd
@@ -101,8 +49,6 @@ def perform_cmd(cmd):
 	return pipe.stdout.readlines()
 
 def replace_lines(view, edit, dest_row, dest_ct, src):
-	print "replace-lines", dest_row, dest_ct
-	
 	dest = sublime.Region(
 		view.text_point(dest_row,0), 
 		view.text_point(dest_row+dest_ct,0)
@@ -126,8 +72,6 @@ def resolve_body(view, row, indent):
 		if not line: return row
 		if not line.startswith(indent): return row
 		row += 1
-
-		if row > 1000: break #TODO
 
 def get_line(view, row=0):
 	point = view.text_point(row, 0)
