@@ -34,7 +34,7 @@ Antiki's insistence on being stupid and simple is its greatest advantage compare
 
 Antiki does not provide [Xiki][0] menus or use Xiki helpers.  It also does not support continuously updating output, and will hang until a command exits or ten seconds have passed -- for these features, the much more powerful [SublimeXiki][1] is recommended.
 
-[0]: http://xiki.org "Xiki -- A Shell Console with GUI Features"
-[1]: https://github.com/lunixbochs/SublimeXiki "Xiki Plugin for Sublime Text 2"
-[2]: http://www.sublimetext.com -- "Sublime Text 2"
-[3]: http://stedolan.github.com/jq/ -- "JQ: A Lightweight and Flexible Command-Line JSON Processor"
+[0]: http://xiki.org 
+[1]: https://github.com/lunixbochs/SublimeXiki 
+[2]: http://www.sublimetext.com 
+[3]: http://stedolan.github.com/jq/ 
