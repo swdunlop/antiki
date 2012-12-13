@@ -27,7 +27,7 @@ def antiki(view, edit):
 		end = resolve_body(view, row+1, indent)
 
 		out = head + op + cmd + '\n' + '\n'.join(
-			indent + line.rstrip() for line in perform_cmd(env, cmd)
+			indent + line.rstrip() for line in perform_cmd(env, cwd, cmd)
 		) + '\n'
 
 		end = replace_lines(view, edit, row, end-row, out) 
@@ -57,10 +57,10 @@ $ echo $BASE
 def expand(val, env):
 	return val.format(**env)
 
-def perform_cmd(env, cmd):
+def perform_cmd(env, cwd, cmd):
 	args = cmd
 	pipe = subprocess.Popen(
-		args, stdout = subprocess.PIPE, stderr = subprocess.STDOUT, shell=True, env=env
+		args, stdout = subprocess.PIPE, stderr = subprocess.STDOUT, shell=True, env=env, cwd=cwd
 	)
 	ticks = 0
 	while ticks < 1000:
