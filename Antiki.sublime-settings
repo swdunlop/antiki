@@ -1,0 +1,19 @@
+{
+	// all values below can be expanded against the ORIGINAL environment
+	// using Python's Format String Syntax, for more info, see:
+	// http://docs.python.org/2/library/string.html#format-string-syntax 
+	// 
+	// in addition, a special variable, {BASE}, expands to the directory
+	// containing the file open in the current view, or HOME if the file
+	// is unsaved
+
+	// place additional environment variables here; this is recommended for 
+	// OSX users, since Sublime's PATH in Darwin is limited to /bin and /usr/bin
+	// 
+	//"env" : {"PATH" : "{HOME}/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"},
+	"env" : {},
+
+	// specifies what working directory to use when executing commands, which
+	// can vary; see {BASE} above for a handy default
+	"cwd" : "{BASE}"
+}

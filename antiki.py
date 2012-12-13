@@ -1,4 +1,4 @@
-import sublime, sublime_plugin, re, subprocess, time
+import sublime, sublime_plugin, re, subprocess, time, os, os.path
 
 class AntikiCommand(sublime_plugin.TextCommand):
 	def run(self, edit):
@@ -6,6 +6,13 @@ class AntikiCommand(sublime_plugin.TextCommand):
 
 def antiki(view, edit):
 	if view.is_read_only(): return
+	
+	base = view.file_name()
+	if base is not None: base = os.path.dirname(base)
+	cfg = sublime.load_settings("Antiki.sublime-settings")
+	env = build_env(cfg, base=base)
+	cwd = expand(cfg.get('cwd', '.'), env)
+
 	sels = view.sel()
 	end = None
 	for sel in sels:
@@ -20,7 +27,7 @@ def antiki(view, edit):
 		end = resolve_body(view, row+1, indent)
 
 		out = head + op + cmd + '\n' + '\n'.join(
-			indent + line.rstrip() for line in perform_cmd(cmd)
+			indent + line.rstrip() for line in perform_cmd(env, cmd)
 		) + '\n'
 
 		end = replace_lines(view, edit, row, end-row, out) 
@@ -34,10 +41,27 @@ def antiki(view, edit):
 		eol += len(head)
 	view.sel().add(sublime.Region(eol,eol))
 
-def perform_cmd(cmd):
+def build_env(cfg, base=None):
+	env = os.environ.copy()
+	env['BASE'] = base or env.get("HOME", ".")
+	mod = cfg.get('env', {})
+	for key in mod:
+		print key
+		env[key] = expand(mod[key], env)
+	return env
+
+''' example:
+$ echo $BASE
+  /Users/scott/Library/Application Support/Sublime Text 2/Packages/Antiki
+'''
+
+def expand(val, env):
+	return val.format(**env)
+
+def perform_cmd(env, cmd):
 	args = cmd
 	pipe = subprocess.Popen(
-		args, stdout = subprocess.PIPE, stderr = subprocess.STDOUT, shell=True
+		args, stdout = subprocess.PIPE, stderr = subprocess.STDOUT, shell=True, env=env
 	)
 	ticks = 0
 	while ticks < 1000:
