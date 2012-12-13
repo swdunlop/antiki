@@ -46,8 +46,7 @@ def build_env(cfg, base=None):
 	env['BASE'] = str(base or env.get("HOME") or '.')
 	mod = cfg.get('env', {})
 	for key in mod:
-		val = expand(mod[key], env)
-		env[key] = val
+		env[key] = str(expand(mod[key], env))
 	return env
 	
 ''' example:
