@@ -12,9 +12,11 @@ def antiki(view, edit):
 	cfg = sublime.load_settings("Antiki.sublime-settings")
 	env = build_env(cfg, base=base)
 	cwd = expand(cfg.get('cwd', '.'), env)
-
+	enc = cfg.get('encoding', 'utf-8')
+	
 	sels = view.sel()
 	end = None
+
 	for sel in sels:
 		# ensure that there is at least one following line.
 		if sel.end() == view.size():
@@ -25,9 +27,10 @@ def antiki(view, edit):
 		if cmd is None: continue
 		indent = head + ' ' * len(op)
 		end = resolve_body(view, row+1, indent)
-
-		out = head + op + cmd + '\n' + '\n'.join(
-			indent + line.decode('ascii', 'ignore').rstrip() for line in perform_cmd(env, cwd, cmd)
+		
+		out = head + op + cmd + '\n' 
+		out = out + '\n'.join(
+			indent + line.decode(enc, 'ignore').rstrip() for line in perform_cmd(env, cwd, cmd)
 		) + '\n'
 
 		end = replace_lines(view, edit, row, end-row, out) 
