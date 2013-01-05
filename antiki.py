@@ -27,7 +27,7 @@ def antiki(view, edit):
 		end = resolve_body(view, row+1, indent)
 
 		out = head + op + cmd + '\n' + '\n'.join(
-			indent + line.rstrip() for line in perform_cmd(env, cwd, cmd)
+			indent + line.decode('ascii', 'ignore').rstrip() for line in perform_cmd(env, cwd, cmd)
 		) + '\n'
 
 		end = replace_lines(view, edit, row, end-row, out) 
