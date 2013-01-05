@@ -15,5 +15,11 @@
 
 	// specifies what working directory to use when executing commands, which
 	// can vary; see {BASE} above for a handy default
-	"cwd" : "{BASE}"
+	"cwd" : "{BASE}",
+
+	// specifies what character encoding to expect from commands, the default is
+        // "utf-8", which is reasonable for OSX and Linux users, but Windows users
+        // may want to use "ascii" or various codepages, such as "cp850".  For more
+        // info, see: http://docs.python.org/2/library/codecs.html#standard-encodings
+	"encoding" : "utf-8"
 }
