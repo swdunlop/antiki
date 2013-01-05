@@ -34,6 +34,10 @@ Antiki's insistence on being stupid and simple is its greatest advantage compare
 
 Antiki does not provide [Xiki][0] menus or use Xiki helpers.  It also does not support continuously updating output, and will hang until a command exits or ten seconds have passed -- for these features, the much more powerful [SublimeXiki][1] is recommended.
 
+## Contributors:
+
+ - @efi -- bug report and fix for windows output decoding
+
 [0]: http://xiki.org 
 [1]: https://github.com/lunixbochs/SublimeXiki 
 [2]: http://www.sublimetext.com 
