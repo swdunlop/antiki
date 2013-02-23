@@ -102,5 +102,5 @@ def resolve_body(view, row, indent):
 def get_line(view, row=0):
 	point = view.text_point(row, 0)
 	if row < 0: return None
- 	line = view.line(point)
+	line = view.line(point)
 	return view.substr(line).strip('\r\n')
