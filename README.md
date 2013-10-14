@@ -27,7 +27,6 @@ Antiki's insistence on being stupid and simple is its greatest advantage compare
 
  - Can execute shell commands in any buffer, not just Xiki buffers.
  - Does not require anything beyond Sublime Text itself, works out of the box in Windows and OSX.
- - Is much more predictable than [Xiki][0] or [SublimeXiki][1], since it does not try to outsmart Sublime Text.
  - Passes all commands through shell, ensuring features like piping to [JQ][3] or `grep` are easily available.
 
 ## Limitations:
