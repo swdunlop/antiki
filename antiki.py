@@ -55,6 +55,8 @@ def build_env(cfg, base=None):
 ''' example:
 $ echo $BASE
   /Users/scott/Library/Application Support/Sublime Text 2/Packages/Antiki
+
+$ cat /dev/zero | xxd
 '''
 
 def expand(val, env):
@@ -70,9 +72,9 @@ def perform_cmd(env, cwd, cmd):
 		ticks += 1
 		time.sleep(.01)
 		if pipe.poll() is not None:
-			return pipe.stdout.readlines()
+			return pipe.stdout.readlines(1024 * 1024)
 	pipe.kill()
-	return pipe.stdout.readlines()
+	return pipe.stdout.readlines(1024 * 1024)
 
 def replace_lines(view, edit, dest_row, dest_ct, src):
 	dest = sublime.Region(
