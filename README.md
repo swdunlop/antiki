@@ -3,24 +3,38 @@ Antiki -- a Xiki Clone for Sublime Text 2
 
 Antiki implements a tiny subset of [Xiki][0] for [Sublime Text 2][2].  It is intended to be more portable and predictable than sophisticated combination of Xiki and @lunixboch's [SublimeXiki][1], while implementing the essential feature of executing shell commands and replacing them with output.
 
-Antiki considers any line starting with `$` after zero or more tabs or spaces to be a possible command for execution.  Placing your cursor on a command and pressing either "Command+Enter" or "Control-Enter" will cause Antiki to pass the command to your shell prompt, execute it, and replace a number of subquent lines with the output.  Antiki will replace any lines with more indent than the command's indent, which effectively allows you to repeately run a command by returning your cursor to the original position and hitting "Command+Enter" again.
+Antiki considers any line starting with `$` after zero or more tabs or spaces to be a possible command for execution.  Placing your cursor on a command and pressing either "Command+Enter" or "Control+Enter" will cause Antiki to pass the command to your shell prompt, execute it, and replace a number of subquent lines with the output.  Antiki will replace any lines with more indent than the command's indent, which effectively allows you to repeately run a command by returning your cursor to the original position and hitting "Command+Enter" again.
 
 This makes Antiki a great tool for writing documentation, examples and working through demos.
 
-## Example 1: 
- 
-    $ redis-cli info | head
-      redis_version:2.4.17
-      redis_git_sha1:00000000
-      redis_git_dirty:0
-      arch_bits:64
-      multiplexing_api:kqueue
-      gcc_version:4.2.1
-      process_id:7818
-      run_id:ac64457c11931712a94ef36a9547e624893755d1
-      uptime_in_seconds:51
-      uptime_in_days:0
 
+#### Example -- Git Commit from README.md: 
+
+For example, while hacking on an update to this README.md, Antiki was used to check `git status`:
+
+      $ git status 
+        # On branch hack
+        # Changes not staged for commit:
+        #   (use "git add <file>..." to update what will be committed)
+        #   (use "git checkout -- <file>..." to discard changes in working directory)
+        #
+        #   modified:   README.md
+        #
+        no changes added to commit (use "git add" and/or "git commit -a")
+
+Once satisfied with the changes, the following command would submit the changes:
+
+      $ git commit -a -m "added git commit example" --amend
+        [hack 62db141] added git commit example
+         1 file changed, 19 insertions(+), 13 deletions(-)
+
+#### Example -- Documenting Remote Setups:
+
+To duplicate the results, simply place your cursor on the command line and hit "Command+Enter" or "Control+Enter".  If your SSH agent is properly configured in your environment and loaded with your key, you can check a remote command:
+
+      $ ssh mutation.ether uptime 
+         17:32:22 up 2 days, 22:39,  0 users,  load average: 0.01, 0.04, 0.05
+      
 ## Features:
 
 Antiki's insistence on being stupid and simple is its greatest advantage compared to similar implementations, making it portable, maintainable and understandable.
