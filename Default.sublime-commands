@@ -1,3 +1,9 @@
 [
-	{"caption" : "Antiki at Cursor", "command" : "antiki"}
+	{"caption" : "Antiki at Cursor", "command" : "antiki"},
+	{"caption": "Antiki: Default Settings", "command": "open_file", "args": {
+		"file": "${packages}/Antiki/Antiki.sublime-settings"
+	}},
+	{"caption": "Antiki: User Settings", "command": "open_file", "args": {
+		"file": "${packages}/User/Antiki.sublime-settings"
+	}}
 ]
