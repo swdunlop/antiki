@@ -1,18 +1,17 @@
-HACKING: >
-    You can use "plyml" to convert this YAML to a .tmLanguage file:
-    $ plyml antiki-tmLanguage.yml >antiki.tmLanguage
-    For "plyml", see: https://gist.github.com/swdunlop/8872387
+# You can use "plyml" to convert this YAML to a .tmLanguage file:
+# $ plyml antiki-tmLanguage.yml >antiki.tmLanguage
+# For "plyml", see: https://gist.github.com/swdunlop/8872387
 
 fileTypes:
 - anti
 name: Antiki
 patterns:
-- match: "^[ \t]*[$](.*)$"
+- match: "^[ \t]*[$](.*)\n?$"
   name: keyword.antiki
-- match: "^[ \t]*  ([^$].*)"
-  name: markup.quote.antiki
 - match: "^[ \t]*(#.*)$"
-  name: markup.heading.antiki
+  name: comment.antiki
+- match: "^[ \t]*  ([^$].*)"
+  name: string.antiki
 scopeName: source.antiki
 uuid: b92bb294-089b-43ea-b5da-45b5dcc9340a
 
