@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>HACKING</key>
+	<string>You can use "plyml" to convert this YAML to a .tmLanguage file: $ plyml antiki-tmLanguage.yml &gt;antiki.tmLanguage For "plyml", see: https://gist.github.com/swdunlop/8872387
+</string>
 	<key>fileTypes</key>
 	<array>
 		<string>anti</string>
@@ -14,19 +17,19 @@
 			<key>match</key>
 			<string>^[ 	]*[$](.*)$</string>
 			<key>name</key>
-			<string>keyword</string>
+			<string>keyword.antiki</string>
 		</dict>
 		<dict>
 			<key>match</key>
 			<string>^[ 	]*  ([^$].*)</string>
 			<key>name</key>
-			<string>markup.quote</string>
+			<string>markup.quote.antiki</string>
 		</dict>
 		<dict>
 			<key>match</key>
 			<string>^[ 	]*(#.*)$</string>
 			<key>name</key>
-			<string>markup.heading</string>
+			<string>markup.heading.antiki</string>
 		</dict>
 	</array>
 	<key>scopeName</key>

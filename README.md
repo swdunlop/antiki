@@ -5,6 +5,8 @@ Antiki implements a tiny subset of [Xiki][] for [Sublime Text 2][ST2] and [Subli
 
 Antiki considers any line starting with `$` after zero or more tabs or spaces to be a possible command for execution.  Placing your cursor on a command and pressing either "Command+Enter" or "Control+Enter" will cause Antiki to pass the command to your shell prompt, execute it, and replace a number of subquent lines with the output.  Antiki will replace any lines with more indent than the command's indent, which effectively allows you to repeately run a command by returning your cursor to the original position and hitting "Command+Enter" again.
 
+If you set your syntax to "Antiki", you can simply use the "Enter" key, without the "Command" or "Control" modifier, if your cursor is currently on a line starting with `$`.
+
 This makes Antiki a great tool for writing documentation, examples and working through demos.
 
 #### Example -- Git Commit from README.md:

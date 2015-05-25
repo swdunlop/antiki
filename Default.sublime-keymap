@@ -1,3 +1,6 @@
 [
-	{"keys": ["ctrl+enter"], "command": "antiki"}
+	{"keys": ["ctrl+enter"], "command": "antiki"},
+	{"keys": ["enter"], "command": "antiki", "context": [
+		{ "key": "selector", "operator": "equal", "operand": "keyword.antiki" },
+	]},
 ]
