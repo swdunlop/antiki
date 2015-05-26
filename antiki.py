@@ -8,12 +8,36 @@ import time
 import os
 import os.path
 
+try:
+    from cStringIO import StringIO
+except:
+    from io import StringIO
+
+class AntikiClearCommand(sublime_plugin.TextCommand):
+    'clears the selected antiki results'
+    def run(self, edit):
+        points = list(sel.begin() for sel in self.view.sel())
+        results = list(x.result for x in parse(self.view) if x.overlaps(*points))
+        results.reverse()
+        for result in results:
+            #print("clear:", repr(result))
+            self.view.erase(edit, result)
+
+class AntikiPrevCommand(sublime_plugin.TextCommand):
+    'selects the previous antiki prompt'
+    def run(self, edit):
+        points = list(sel.begin() for sel in self.view.sel())
+        next = (x.prompt.end()-1 for x in parse(self.view) if x.overlaps(*points))
+        next = list(sublime.Region(x, x) for x in next)
+        if not next: return
+        self.view.sel().clear()
+        self.view.sel().add_all(next)
+        self.view.show(next[0])
 
 class AntikiCommand(sublime_plugin.TextCommand):
-
+    'evaluates the antiki prompt under the cursor'
     def run(self, edit):
         antiki(self.view, edit)
-
 
 def antiki(view, edit):
     if view.is_read_only():
@@ -26,39 +50,47 @@ def antiki(view, edit):
     env = build_env(cfg, base=base)
     cwd = expand(cfg.get('cwd', '.'), env)
     enc = cfg.get('encoding', 'utf-8')
-
-    sels = view.sel()
     end = None
-
-    for sel in sels:
-        # ensure that there is at least one following line.
-        if sel.end() == view.size():
-            view.insert(edit, view.size(), '\n')
-
-        row, _ = view.rowcol(sel.b)
-        head, op, cmd = resolve_head(view, row)
-        if cmd is None:
-            continue
-        indent = head + ' ' * len(op)
-        end = resolve_body(view, row+1, indent)
-
-        out = head + op + cmd + '\n'
-        out = out + '\n'.join(
-            indent + line.decode(enc, 'ignore').rstrip() for line in perform_cmd(env, cwd, cmd)
-        ) + '\n'
-
-        end = replace_lines(view, edit, row, end-row, out)
-
-    if end is None:
-        return  # don't play with the selection..
-    end = view.line(end.b)
+    points = list(sel.begin() for sel in view.sel())
+    exprs = list(x for x in parse(view) if x.overlaps(*points))
+    changes = []
+    for expr in exprs:
+        indent = expr.indent * ' '
+        prompt = view.substr(expr.prompt).rstrip()
+        cmd = rx_antiki.match(prompt).group(3)
+        results = perform_cmd(env, cwd, cmd)
+        out = StringIO()
+        out.write(indent)
+        indent += '  '
+        out.write(prompt)
+        out.write('\n')
+        for line in results:
+            out.write(indent)
+            out.write(line.decode(enc, 'ignore').rstrip())
+            out.write('\n')
+        changes.append((expr.region, out.getvalue()))
+    if not changes: return
+    changes.reverse()
     view.sel().clear()
-    eol = end.end()
-    if end.empty():
-        view.insert(edit, eol, head)
-        eol += len(head)
-    view.sel().add(sublime.Region(eol, eol))
+    # if the last change did not end with an LF, the insertion would be after the EOF
+    # so, we give it the clamps..
+    # NOTE: doesn't work in ST3; appears to really be cover, not intersection.
+    # last_region = changes[0][0].intersection(sublime.Region(0, view.size()))
+    #last_region = clamp_region(changes[0][0], view.size())
+    #changes[0] = (last_region, changes[0][1])
+    for region, result in changes:
+        #print("replace begin:", region.begin(), "end:", region.end(), "max:", view.size(), "amt:", len(result))
+        view.replace(edit, region, result)
+        pos = region.begin()+len(result)
+        region = sublime.Region(pos, pos)
+        view.sel().add(region)
 
+def clamp_region(region, eof):
+    a, b = region.a, region.b
+    if b > a: a, b = b, a
+    if a >= eof: a = eof
+    if b >= eof: b = eof
+    return sublime.Region(a,b)
 
 def build_env(cfg, base=None):
     env = os.environ.copy()
@@ -72,15 +104,15 @@ def build_env(cfg, base=None):
 $ echo $BASE
   /Users/scott/Library/Application Support/Sublime Text 2/Packages/Antiki
 
+# don't run this unless you're ready for 10s of beach ball fun..
 $ cat /dev/zero | xxd
 '''
-
 
 def expand(val, env):
     return val.format(**env)
 
-
 def perform_cmd(env, cwd, cmd):
+    #TODO: make this use the async callback api.
     args = cmd
     pipe = subprocess.Popen(
         args, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=True, env=env, cwd=cwd
@@ -94,43 +126,68 @@ def perform_cmd(env, cwd, cmd):
     pipe.kill()
     return pipe.stdout.readlines(1024 * 1024)
 
+def parse(view, region=None, n=0):
+    'returns an array of lines and exprs'
+    if region is None:
+        region = sublime.Region(0, view.size())
 
-def replace_lines(view, edit, dest_row, dest_ct, src):
-    dest = sublime.Region(
-        view.text_point(dest_row, 0),
-        view.text_point(dest_row+dest_ct, 0)
-    )
+    regions = view.lines(region)
+    exprs = []
+    while regions and ((n < 1) or (len(exprs) < n)):
+        region, regions = regions[0], regions[1:]
+        line = view.substr(region)
+        m = rx_antiki.match(line)
+        if not m: continue
+        indent = len(m.group(1)) #TODO: calculate tabs?
+        prompt = sublime.Region(region.begin(), region.end()+1)
+        result_begin = prompt.end()
+        result_end = result_begin
+        while regions:
+            region = regions[0]
+            line = view.substr(region)
+            g = rx_indent.match(line)
+            if not g:
+                break
+            #TODO: calculate tabs?
+            if len(g.group(1)) <= indent:
+                break
+            result_end, regions = region.end()+1, regions[1:]
+        result = sublime.Region(result_begin, result_end)
+        #print("indent:", indent, "prompt:", prompt, "result:", result)
+        exprs.append(expr(indent, prompt, result))
 
-    view.replace(edit, dest, src)
-    end = view.text_point(dest_row, 0) + len(src)
-    return sublime.Region(end, end)
+    return exprs
 
-rx_antiki = re.compile('^([ \t]*)([$] +)(.*)$')
+class expr(object):
+    def __init__(self, indent, prompt, result):
+        self.indent = indent
+        self.prompt = prompt
+        self.result = result
 
+    @property
+    def begin(self):
+        return self.prompt.begin()
 
-def resolve_head(view, row):
-    line = get_line(view, row)
-    m = rx_antiki.match(line)
-    if m:
-        return m.groups()
-    return None, None, None
+    @property
+    def end(self):
+        return self.result.end()
 
+    @property
+    def region(self):
+        return sublime.Region(self.begin, self.end)
 
-def resolve_body(view, row, indent):
-    while True:
-        line = get_line(view, row)
-        if not line:
-            return row
-        if not line.startswith(indent):
-            return row
-        row += 1
+    def overlaps(self, *points):
+        a, b = self.begin, self.end
+        for point in points:
+            if point < a: continue
+            if point >= b: continue
+            return True
+        return False
 
+    def __repr__(self):
+        return '<expr: %s %s %s>' % (self.begin, self.result, self.end)
 
-def get_line(view, row=0):
-    point = view.text_point(row, 0)
-    if row < 0:
-        return None
-    line = view.line(point)
-    return view.substr(line).strip('\r\n')
+rx_antiki = re.compile('^([ \\t]*)(\\$ )(.*)$')
+rx_indent = re.compile('^([ \\t]*)(.*)$')
 
-print("antiki loaded.")
+#print("antiki loaded.")

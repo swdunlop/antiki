@@ -1,6 +1,12 @@
 [
 	{"keys": ["ctrl+enter"], "command": "antiki"},
 	{"keys": ["enter"], "command": "antiki", "context": [
-		{ "key": "selector", "operator": "equal", "operand": "keyword.antiki" },
+		{ "key": "selector", "operator": "equal", "operand": "prompt.antiki" },
 	]},
+	{"keys": ["escape"], "command": "antiki_clear", "context": [
+		{ "key": "selector", "operator": "equal", "operand": "prompt.antiki" },
+	]},
+	{"keys": ["escape"], "command": "antiki_prev", "context": [
+		{ "key": "selector", "operator": "equal", "operand": "result.antiki" },
+	]}
 ]

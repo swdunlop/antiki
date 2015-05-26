@@ -6,12 +6,12 @@ fileTypes:
 - anti
 name: Antiki
 patterns:
-- match: "^[ \t]*[$](.*)\n?$"
-  name: keyword.antiki
-- match: "^[ \t]*(#.*)$"
-  name: comment.antiki
-- match: "^[ \t]*  ([^$].*)"
-  name: string.antiki
+- match: "^[ \\t]*[$]([^\\n]*)\\n?$"
+  name: keyword prompt.antiki
+- match: "^[ \\t]*(#.*)\\n?$"
+  name: comment result.antiki
+- match: "^[ \\t]*  ([^$].*)\\n?$"
+  name: string result.antiki
 scopeName: source.antiki
 uuid: b92bb294-089b-43ea-b5da-45b5dcc9340a
 

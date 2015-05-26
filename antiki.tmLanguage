@@ -12,22 +12,21 @@
 	<array>
 		<dict>
 			<key>match</key>
-			<string>^[ 	]*[$](.*)
-?$</string>
+			<string>^[ \t]*[$]([^\n]*)\n?$</string>
 			<key>name</key>
-			<string>keyword.antiki</string>
+			<string>keyword prompt.antiki</string>
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>^[ 	]*(#.*)$</string>
+			<string>^[ \t]*(#.*)\n?$</string>
 			<key>name</key>
-			<string>comment.antiki</string>
+			<string>comment result.antiki</string>
 		</dict>
 		<dict>
 			<key>match</key>
-			<string>^[ 	]*  ([^$].*)</string>
+			<string>^[ \t]*  ([^$].*)\n?$</string>
 			<key>name</key>
-			<string>string.antiki</string>
+			<string>string result.antiki</string>
 		</dict>
 	</array>
 	<key>scopeName</key>
